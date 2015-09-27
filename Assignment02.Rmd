@@ -1,0 +1,80 @@
+---
+title: "Stat-Inference Assignment-02"
+author: "Vinsent P."
+date: "September 26, 2015"
+output: pdf_document
+---
+  
+  ## Objective: Going to analyze the ToothGrowth data in the R datasets package. 
+  ### 1. Load the ToothGrowth data and perform some basic exploratory data analyses 
+  ### 2. Provide a basic summary of the data.
+  ### 3. Use confidence intervals and/or hypothesis tests to compare tooth growth by supp and dose. (Only use    ### techniques from class, even if there's other approaches worth considering)
+  ### 5. State your conclusions and the assumptions needed for your conclusions.
+  
+```{r echo = TRUE}
+library(ggplot2)  
+
+### Load the dataset
+data(ToothGrowth)
+
+```
+###Explore the Data
+```{r}
+head(ToothGrowth)
+summary(ToothGrowth)
+
+
+# visualize the data
+qplot(dose,len,data=ToothGrowth, col=supp, main="Tooth length of guinea pigs by supplement type and dosage (mg)",xlab="Dosage (mg)", ylab="Tooth length") + geom_boxplot(aes(fill = supp))
+```
+##Hypothesis Testing
+
+###H0: There is no significant difference in treatment from both the medicine OJ and VC
+###H1: alternate of H0
+
+###Tooth length in VC = OJ   H0
+###Tooth length in VC NOT equal to OJ treaments
+
+###Split the two treatment groups
+```{r}
+OJ = ToothGrowth$len[ToothGrowth$supp == 'OJ']
+VC = ToothGrowth$len[ToothGrowth$supp == 'VC']
+```
+
+## T- Test
+
+### one tail test
+
+
+```{r}
+t.test(OJ, VC, alternative = "greater", paired = FALSE, var.equal = FALSE, conf.level = 0.95)
+```
+
+###Hypothesis for dosage
+
+###HO: there is no sifnificant difference in dosage in two sizes
+###H1: There is difference in the two dosage
+```{r}
+
+##Divide the dataset with dosage group
+
+OJ2 = ToothGrowth$len[ToothGrowth$supp == 'OJ' & ToothGrowth$dose == 2]
+VC2 = ToothGrowth$len[ToothGrowth$supp == 'VC' & ToothGrowth$dose == 2]
+
+half = ToothGrowth$len[ToothGrowth$dose == 0.5]
+one = ToothGrowth$len[ToothGrowth$dose == 1]
+two = ToothGrowth$len[ToothGrowth$dose == 2]
+
+
+# T-test
+
+##One-tailed independent t-test with unequal variance.
+
+t.test(half, one, alternative = "less", paired = FALSE, var.equal = FALSE, conf.level = 0.95)
+
+
+```
+## p-value = 6.342e-08 is less than the 5% significance level .05 Hence accepting the Alternate hypothesis as there is difference in tooth growth.
+
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
